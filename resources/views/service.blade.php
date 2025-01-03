@@ -1,0 +1,2 @@
+<h1>{{ $service->name }}</h1>
+<p>{{ $service->description }}</p>
