@@ -24,7 +24,7 @@
     #img-div {
         height: 60vh;
         width: 100%;
-        background-image: url({{ asset($service->image) }});
+        background-image: url({{ asset('storage/'.$service->image) }});
         background-repeat: no-repeat;
         background-size: contain;
         background-position: center;
@@ -35,7 +35,7 @@
             height: 40vh;
             width: 100%;
             background-size: contain;
-            background-image: url({{ asset($service->image) }});
+            background-image: url({{ asset('storage/'.$service->image) }});
             background-position: center;
             margin: 0 auto;
         }
@@ -46,7 +46,7 @@
             height: 30vh;
             width: 100%;
             background-size: contain;
-            background-image: url({{ asset($service->image) }});
+            background-image: url({{ asset('storage/'.$service->image) }});
             background-position: center;
             margin: 0 auto;
         }

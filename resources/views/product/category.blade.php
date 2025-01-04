@@ -59,6 +59,42 @@
 
     .product-card {
         background-color: rgb(245, 245, 245);
+        height: 100%;
+        transition: transform 0.2s;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .product-image {
+        height: 200px;
+        object-fit: contain;
+        mix-blend-mode: darken;
+    }
+
+    .category-nav {
+        background-color: #070736;
+        overflow-x: auto;
+        white-space: nowrap;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .category-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category-link {
+        color: white;
+        text-decoration: none;
+        padding: 10px 15px;
+        display: inline-block;
+    }
+
+    .category-link:hover, .category-link.active {
+        background-color: rgba(255,255,255,0.1);
     }
 
     @media (max-width: 1200px) {
@@ -142,260 +178,150 @@
     }
 </style>
 
-<main class="mt-5 pt-4">
-    <!-- filter container -->
-    <div class="d-flex justify-content-end bg-light position-absolute px-md-4 pt-4" id="filter_main_div">
-        <form method="get" action="{{ request()->path() }}" class="w-100">
-            <i class="fa-solid fa-xmark"></i>
-            <div id="filter_list">
-                <ul class="p-0 text-center">
-                    <li>Manufacturer</li>
-                ```blade
-                </ul>
-            </div>
-            <div id="filter_option_list" class="m-md-4">
-                @if($filters['manufacturers'])
-                    @foreach($filters['manufacturers'] as $manufacturer)
-                        @if($manufacturer['manufacturer'] != '')
-                            <div class="form-check my-2 mx-3">
-                                <input class="form-check-input" type="checkbox" name="manufacturer" id="option_{{ $loop->index }}" value="{{ $manufacturer['manufacturer'] }}" />
-                                <label class="form-check-label" for="option_{{ $loop->index }}">{{ $manufacturer['manufacturer'] }}</label>
-                            </div>
-                        @endif
-                    @endforeach
-                @endif
-            </div>
-            <div id="filter_list">
-                <ul class="p-0 text-center">
-                    <li>Category</li>
-                </ul>
-            </div>
-            <div id="filter_option_list" class="m-md-4">
-                @if($filters['categories'])
-                    @foreach($filters['categories'] as $category)
-                        @if($category['category'] != '')
-                            <div class="form-check my-2 mx-3">
-                                <input class="form-check-input" type="checkbox" name="category" id="category{{ $loop->index }}" value="{{ $category['id'] }}" />
-                                <label class="form-check-label" for="category{{ $loop->index }}">{{ $category['name'] }}</label>
-                            </div>
-                        @endif
-                    @endforeach
-                @endif
-            </div>
-            <div id="filter_list">
-                <ul class="p-0 text-center">
-                    <li>Condition</li>
-                </ul>
-            </div>
-            <div id="filter_option_list" class="m-md-4">
-                @if($filters['conditions'])
-                    @foreach($filters['conditions'] as $condition)
-                        @if($condition['condition'] != '' && $condition['condition'] != null)
-                            <div class="form-check my-2 mx-3">
-                                <input class="form-check-input" type="checkbox" name="condition" id="condition{{ $loop->index }}" value="{{ $condition['condition'] }}" />
-                                <label class="form-check-label" for="condition{{ $loop->index }}">{{ $condition['condition'] }}</label>
-                            </div>
-                        @endif
-                    @endforeach
-                @endif
-            </div>
-            <div id="filter_list">
-                <ul class="p-0 text-center">
-                    <li>Availability</li>
-                </ul>
-            </div>
-            <div id="filter_option_list" class="m-md-4">
-                @if($filters['availabilities'])
-                    @foreach($filters['availabilities'] as $availability)
-                        @if($availability['availability'] != '' && $availability['availability'] != null)
-                            <div class="form-check my-2 mx-3">
-                                <input class="form-check-input" type="checkbox" name="availability" id="availability_{{ $loop->index }}" value="{{ $availability['availability'] }}" />
-                                <label class="form-check-label" for="availability_{{ $loop->index }}">{{ $availability['availability'] }}</label>
-                            </div>
-                        @endif
-                    @endforeach
-                @endif
-            </div>
-            <button type="submit" class="btn text-white position-absolute" style="background-color: #090841; bottom: 13px; right: 40px;">Apply Filter</button>
-        </form>
+<main class="container-fluid mt-5 pt-4">
+    <!-- Category Navigation -->
+    <div class="category-nav mb-4">
+        <div class="container">
+            <a href="{{ route('product-list-categorized', ['name' => 'all']) }}?{{ http_build_query(request()->except(['page', 'category'])) }}" 
+                class="category-link {{ $name === 'all' ? 'active' : '' }}">
+                All Products
+            </a>
+            @foreach($filters['categories'] as $category)
+                <a href="{{ route('product-list-categorized', ['name' => $category->name]) }}?{{ http_build_query(request()->except(['page', 'category'])) }}" 
+                    class="category-link {{ $name === $category->name ? 'active' : '' }}">
+                    {{ $category->name }}
+                </a>
+            @endforeach
+        </div>
     </div>
 
-    <a class="categorybtn d-sm-none mx-2 text-decoration-none">Categories <svg xmlns="http://www.w3.org/2000/svg"
-            width="18" height="18" fill="currentColor" class="bi bi-sign-turn-right" viewBox="0 0 16 16">
-            <path
-                d="M5 8.5A2.5 2.5 0 0 1 7.5 6H9V4.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L9.41 8.658A.25.25 0 0 1 9 8.466V7H7.5A1.5 1.5 0 0 0 6 8.5V11H5z" />
-            <path fill-rule="evenodd"
-                d="M6.95.435c.58-.58 1.52-.58 2.1 0l6.515 6.516c.58 ```blade
-            .58 1.519 0 2.098L9.05 15.565c-.58.58-1.519.58-2.098 0L.435 9.05a1.48 1.48 0 0 1 0-2.098zm1.4.7a.495.495 0 0 0-.7 0L1.134 7.65a.495.495 0 0 0 0 .7l6.516 6.516a.495.495 0 0 0 .7 0l6.516-6.516a.495.495 0 0 0 0-.7L8.35 1.134Z" />
-        </svg></a>
-    <div id="categorybox"
-        class="container-fluid mt-2 px-2 py-4 py-sm-0 h-10 d-flex flex-column-reverse flex-sm-row position-absolute align-items-center justify-content-start text-nowrap overflow-scroll"
-        style="background-color: #070736; z-index: 20;">
-        @if($filters['categories'])
-        <span class="mx-3 no-link"><a href="{{ route('product-list-categorized', ['name' => 'all']) }}"> All Products </a></span>
-        @foreach($filters['categories'] as $category)
-            @if($category['category'] != '')
-                <span class="mx-3 no-link"><a href="{{ route('product-list-categorized', ['name' => $category]) }}"> {{ $category }}</a></span>
-            @endif
-        @endforeach
-        @else
-            <span class="w-10 mx-2 no-link"> Sorry! No Categories Available Right Now...</span>
-        @endif
-    </div>
-
-    <div class="container-fluid mt-3">
-        <div class="row d-flex justify-content-center">
-            <div class="d-flex justify-content-between">
-                <p class="mt-sm-5 pt-sm-3">Showing products of {{ $name }} category. </p>
-                <button class="btn border mt-sm-5 me-3 px-3" id="filter_btn"><i class="fa-solid fa-filter"></i> Filter Content</button>
+    <div class="container">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h4>Showing products of {{ $name }} category</h4>
             </div>
+            <div class="col-md-6 text-md-end">
+                <button class="btn btn-outline-primary" id="filter_btn">
+                    <i class="fa-solid fa-filter"></i> Filter Products
+                </button>
+            </div>
+        </div>
 
-            <!-- Main Content -->
-            <div class="row">
-                @if($products)
-                    <div class="product-grid">
-                        @foreach($products as $product)
-                            <div class="product-card">
-                                <a href="{{ route('product-view', ['id' => $product->id]) }}" class="text-decoration-none border-none">
-                                    <div class="card h-100" style="background-color: rgb(245, 245, 245);">
-                                        <div class="card-img-top-wrapper p-3">
-                                            <img src="{{ asset($product->image) }}" alt="Product Name" class="card-img-top rounded" style="mix-blend-mode: darken; aspect-ratio:calc(4/4)">
-                                        </div>
-                                        <div class="card-body d-flex flex-column">
-                                            <span class="text-secondary" style="font-size: 14px; margin: -25px 0px 10px 0px;">{{ $product->category }}</span>
-                                            <h5 class="card-title fw-bolder text-dark">{{ $product->name }}</h5>
-                                            <p class="card-text flex-grow-1 text-secondary">{{ $product->description }}</p>
-                                            <table class="table" style="font-size: 12px; margin-top: -20px;">
-                                                <tbody>
-                                                    @if($product->part_number)
-                                                        <tr>
-                                                            <td class="fw-bold">Part Number</td>
-                                                            <td>{{ $product->part_number }}</td>
-                                                        </tr>
-                                                    @endif
-                                                    @if($product->availability)
-                                                        <tr>
-                                                            <td class="fw-bold">Availability</td>
-                                                            <td>{{ $product->availability }}</td>
-                                                        </tr>
-                                                    @endif
-                                                </tbody>
-                                            </table>
-                                            <div class="d-flex justify-content-between">
-                                                @if($product->price)
-                                                    <span class="text-secondary fw-bolder fs-4">${{ $product->price }} <span style="font-size: 14px;">{{ $product->currency }}</span></span>
-                                                @else
-                                                    <span class="text-danger fw-bolder fs-5">Login to view price</span>
-                                                @endif
-                                            </div>
-                                        </div>
+        <!-- Products Grid -->
+        <div class="row g-4">
+            @if($products->count() > 0)
+                @foreach($products as $product)
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                        <div class="product-card">
+                            <a href="{{ route('product-view', $product->id) }}" class="text-decoration-none">
+                                <div class="card border-0">
+                                    <div class="card-body">
+                                        <img src="{{ asset($product->image) }}" 
+                                            class="product-image w-100 mb-3" 
+                                            alt="{{ $product->name }}">
+                                        <h5 class="card-title text-dark">{{ $product->name }}</h5>
+                                        <p class="card-text text-muted">{{ $product->category->name }}</p>
+                                        
+                                        @if($product->part_number)
+                                            <p class="card-text small mb-1">
+                                                Part Number: {{ $product->part_number }}
+                                            </p>
+                                        @endif
+                                        
+                                        @if($product->availability)
+                                            <p class="card-text small mb-2">
+                                                Availability: {{ $product->availability }}
+                                            </p>
+                                        @endif
+                                        
+                                        @if($product->price)
+                                            <p class="price mb-0">
+                                                ${{ number_format($product->price, 2) }}
+                                                <small class="text-muted">{{ $product->currency }}</small>
+                                            </p>
+                                        @else
+                                            <p class="text-danger">Login to view price</p>
+                                        @endif
                                     </div>
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    @if($products->total() > 15)
-                        <div class="pagination d-flex justify-content-center mt- ```blade
-                        <div class="pagination d-flex justify-content-center mt-4">
-                            <ul class="pagination">
-                                @if($products->onFirstPage())
-                                    <li class="page-item disabled">
-                                        <span class="page-link">First</span>
-                                    </li>
-                                @else
-                                    <li class="page-item">
-                                        <a class="page-link" href="{{ $products->url(1) }}">First</a>
-                                    </li>
-                                @endif
-
-                                @if($products->previousPageUrl())
-                                    <li class="page-item">
-                                        <a class="page-link" href="{{ $products->previousPageUrl() }}">Previous</a>
-                                    </li>
-                                @endif
-
-                                @foreach($products->getUrlRange(1, $products->lastPage()) as $num => $url)
-                                    @if($num == $products->currentPage())
-                                        <li class="page-item active">
-                                            <span class="page-link">{{ $num }}</span>
-                                        </li>
-                                    @else
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ $url }}">{{ $num }}</a>
-                                        </li>
-                                    @endif
-                                @endforeach
-
-                                @if($products->nextPageUrl())
-                                    <li class="page-item">
-                                        <a class="page-link" href="{{ $products->nextPageUrl() }}">Next</a>
-                                    </li>
-                                @endif
-
-                                @if($products->hasMorePages())
-                                    <li class="page-item">
-                                        <a class="page-link" href="{{ $products->url($products->lastPage()) }}">Last</a>
-                                    </li>
-                                @else
-                                    <li class="page-item disabled">
-                                        <span class="page-link">Last</span>
-                                    </li>
-                                @endif
-                            </ul>
+                                </div>
+                            </a>
                         </div>
-                    @endif
-
-                @else
-                    <div class="col-md-4">
-                        <div class="fw-bolder" style="height: 50vh;"> Sorry! No Products Available.</div>
                     </div>
-                @endif
-            </div>
+                @endforeach
+
+                <!-- Pagination -->
+                <div class="col-12">
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $products->links() }}
+                    </div>
+                </div>
+            @else
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <h4 class="alert-heading">No Products Found</h4>
+                        <p>Sorry, no products are available in this category at the moment.</p>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Filter Sidebar -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="filterSidebar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Filter Products</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form method="get" action="{{ route('product-list-categorized', ['name' => 'all']) }}">
+                <!-- Manufacturer Filter -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Manufacturer</h6>
+                    @foreach($filters['manufacturers'] as $manufacturer)
+                        @if($manufacturer->manufacturer)
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" 
+                                    name="manufacturer[]" 
+                                    value="{{ $manufacturer->manufacturer }}"
+                                    {{ in_array($manufacturer->manufacturer, (array)request('manufacturer')) ? 'checked' : '' }}>
+                                <label class="form-check-label">
+                                    {{ $manufacturer->manufacturer }}
+                                </label>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+
+                <!-- Category Filter -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Category</h6>
+                    @foreach($filters['categories'] as $category)
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                name="category[]" 
+                                value="{{ $category->id }}"
+                                {{ in_array($category->id, $selectedCategories) ? 'checked' : '' }}>
+                            <label class="form-check-label">
+                                {{ $category->name }}
+                            </label>
+                        </div>
+                    @endforeach
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    Apply Filters
+                </button>
+            </form>
         </div>
     </div>
 </main>
 
 <script>
-    let categorybox = document.querySelector('#categorybox');
-    let categorybtn = document.querySelector('.categorybtn');
-    let a = 0;
-
-    if (window.innerWidth <= 575) {
-        categorybox.style.left = "-100vw";
-        categorybox.style.transition = "0.3s";
-        a = 1;
-
-        categorybtn.addEventListener("click", () => {
-            categorybox.style.width = "65%";
-
-            if (a == 0) {
-                categorybox.style.left = "-100vw";
-                categorybox.style.transition = "0.3s";
-                a = 1;
-            } else {
-                categorybox.style.left = "0vw";
-                categorybox.style.transition = "0.3s";
-                a = 0;
-            }
-        })
-    } else {
-        categorybox.style.left = "0vw";
-        categorybox.style.transition = "0.3s";
-        a = 0;
-    }
-
-    // filter option script
-    let openfilter = document.querySelector('#filter_btn');
-    let closefilter = document.querySelector('.fa-xmark');
-
-    openfilter.addEventListener("click", () => {
-        document.querySelector("#filter_main_div").style.right = "5px";
-    })
-
-    closefilter.addEventListener("click", () => {
-        document.querySelector("#filter_main_div").style.right = "100%";
-    })
+    // Initialize Bootstrap's offcanvas
+    document.getElementById('filter_btn').addEventListener('click', function() {
+        var offcanvas = new bootstrap.Offcanvas(document.getElementById('filterSidebar'));
+        offcanvas.show();
+    });
 </script>
-
 @endsection

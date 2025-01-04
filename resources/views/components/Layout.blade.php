@@ -109,6 +109,29 @@
                             <a class="nav-link" href="{{ route('contactpage') }}"><i class="fa-solid fa-address-book"></i> CONTACT</a>
                         </li>
                     </ul>
+                    <div class="icon-container d-flex mx-2 mt-2 mt-md-0 mb-3 mb-md-0">
+                        @auth
+                            <a href="{{ route('profile') }}"
+                                class="text-dark me-3 text-decoration-none border px-3 py-1 rounded">
+                                <i class="fas fa-user fs-6"></i> {{ Auth::user()->username }}
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="text-dark me-3 fs-6">
+                                <i class="fas fa-user fs-6"></i>
+                            </a>
+                        @endauth
+                        <div>
+                            <a href="{{ route('cart.index') }}" class="text-dark me-3">
+                                <span class="position-absolute bg-dark text-white fw-bold px-1"
+                                    style="font-size: 10px; border-radius: 100%; margin-top: -5px; margin-left: 8px; z-index: 2;">
+                                    {{ $no_of_items ?? 0 }}
+                                </span>
+                                <i class="fas fa-shopping-cart fs-6"></i>
+                            </a>
+                        </div>
+                        <a id="searchopen" class="text-dark"><i class="fas fa-search fs-6"></i></a>
+                    </div>
+                    
                 </div>
             </div>
         </nav>
@@ -307,6 +330,7 @@ ABT4S 2E8 Canada'}}
             return true;
         }
     </script>
+    @stack('scripts')
 </body>
 
 </html>

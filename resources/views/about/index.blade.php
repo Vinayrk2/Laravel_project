@@ -104,7 +104,7 @@
         <section class="container-fluid">
             <div class="text-center py-5">
                 <div class="container">
-                    <img src="{{ asset('images/about background.png') }}" alt="Background Image" class="background-image">
+                    <img src="{{ asset('storage/'.'about background.png') }}" alt="Background Image" class="background-image">
                     <h5 id="backh5" class="display-2 fw-lighter mb-4 fw-bold">ABOUT US</h5>
                 </div>
                 <p class="lead px-md-5 text-secondary">

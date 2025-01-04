@@ -2,85 +2,76 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Categories;
+use App\Models\Product;
 use Illuminate\Http\Request;
-use App\Models\Product; // Import the Product model
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Log;
+use App\Models\Categories;
 
 class ProductController extends Controller
 {
-    
-
-    public function categorizedProducts(Request $request, $name)
+    public function categorizedProducts($name, Request $request)
     {
-        Log::info('Fetching products for category:', ['category_name' => $name]);
-    
-        if ($name != "all" && $request->query('category')) {
-            $data = $request->query();
-            $query = http_build_query($data);
-            Log::info('Redirecting to all products with query:', ['query' => $query]);
-            return redirect()->route('product.category.all', ['query' => $query]);
-        } else {
-            Log::info('Fetching category by name:', ['category_name' => $name]);
-            $category = Categories::where('name', $name)->first();
-    
-            if ($category) {
-                Log::info('Category found:', ['category' => $category]);
-                // Use the query builder to paginate directly
-                $products = $category->products()->paginate(15); // Adjust the number of items per page as needed
-                Log::info('Products fetched for category:', ['products' => $products->toArray()]);
-            } 
-            else if($name=='all'){
-                Log::info('Fetching all products');
-                $products = Product::paginate(15); // Adjust the number of items per page as needed
-            }
-            else {
-                Log::info('Category not found:', ['category_name' => $name]);
-                $products = collect(); // Initialize as an empty collection
-            }
-        }
-    
-        if ($products->isEmpty()) {
-            Log::info('No products found for category:', ['category_name' => $name]);
-            $pageObj = null;
-            $filter = $this->getFilterOptions();
-            return view('product.category', [
-                'products' => $pageObj,
-                'filters' => $filter,
-                'name' => $name,
-            ]);
-        }
-    
-        // No need to create a products dictionary since we are paginating directly
-        $count = [
-            'products' => $products->total(), // Get the total count of products
+        // Get all unique filters for the filter sidebar
+        $filters = [
+            'manufacturers' => Product::select('manufacturer')->distinct()->get(),
+            'categories' => Categories::all(),
+            'conditions' => Product::select('condition')->distinct()->get(),
+            'availabilities' => Product::select('availability')->distinct()->get(),
         ];
-    
-        Log::info('Pagination and count:', ['page_obj' => $products, 'count' => $count]);
-    
-        $filter = $this->getFilterOptions();
-        return view('product.category', [
-            'products' => $products, // Pass the paginated products directly
-            'name' => $name,
-            'count' => $count,
-            'filters' => $filter,
-        ]);
+
+        // Query builder for products
+        $query = Product::query();
+
+        // Handle category filtering
+        $selectedCategories = [];
+        
+        // If category filters are applied via checkboxes
+        if ($request->has('category')) {
+            $selectedCategories = (array)$request->category;
+            $query->whereIn('category_id', $selectedCategories);
+        }
+        // If no category filter is applied but URL category is not 'all'
+        elseif ($name !== 'all') {
+            $category = Categories::where('name', $name)->first();
+            if ($category) {
+                $selectedCategories[] = $category->id;
+                $query->where('category_id', $category->id);
+            }
+        }
+
+        // Apply manufacturer filter
+        if ($request->has('manufacturer')) {
+            $manufacturers = (array)$request->manufacturer;
+            $query->whereIn('manufacturer', $manufacturers);
+        }
+
+        // Apply condition filter
+        if ($request->has('condition')) {
+            $conditions = (array)$request->condition;
+            $query->whereIn('condition', $conditions);
+        }
+
+        // Apply availability filter
+        if ($request->has('availability')) {
+            $availabilities = (array)$request->availability;
+            $query->whereIn('availability', $availabilities);
+        }
+
+        // Get paginated results with relationships
+        $products = $query->with('category')->paginate(15)->withQueryString();
+
+        return view('product.category', compact('products', 'filters', 'name', 'selectedCategories'));
     }
 
-    public function getFilterOptions()
-{
-    // Get the distinct values for each filter option
-    $categories = Categories::all();
-    $manufacturers = Product::distinct()->select('manufacturer')->get();
-    $conditions = Product::distinct()->select('condition')->get();
-    $availabilities = Product::distinct()->select('availability')->get();
+    public function show($id)
+    {
+        $product = Product::with(['category', 'images'])->findOrFail($id);
+        
+        // Get related products from same category
+        $related_products = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->get();
 
-    return [
-        'categories' => $categories,
-        'manufacturers' => $manufacturers,
-        'conditions' => $conditions,
-        'availabilities' => $availabilities
-    ];
-}
+        return view('products.show', compact('product', 'related_products'));
+    }
 }
