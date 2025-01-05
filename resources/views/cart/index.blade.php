@@ -1,112 +1,120 @@
 @extends('components.Layout')
 
 @section('content')
-<div class="container-fluid" style="margin-top: 70px;">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="row">
-                <div class="col-10">
-                </div>
-                @if($cartItems->count() > 0)
-                <div class="col-12">
-                    <a href="{{ route('cart.clear') }}" class="btn w-100 border bg-light fs-5 fw-bold text-danger">
-                        <i class="fa-solid fa-trash-can"></i> Remove All Items
-                    </a>
-                </div>
-                @endif
-            </div>
-
-            @if($cartItems->count() > 0)
-                @foreach($cartItems as $item)
-                <div class="card mb-4 mt-3">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img src="{{ $item->product->image }}" alt="Cart Product Image" 
-                                    class="rounded" style="mix-blend-mode: darken; height: 200px;">
-                            </div>
-                            <div class="col-md-8">
-                                <h5 class="card-title fs-4">{{ $item->product->name }}</h5>
-                                <p class="card-text text-muted" style="margin-top: -8px;">
-                                    {{ $item->product->category->name }}
-                                </p>
-                                <div class="col-auto">
-                                    <div class="d-flex">
-                                        <div>
-                                            <p>Quantity: </p>
-                                        </div>
-                                        <div class="mx-3">
-                                            <h5>
-                                                <a href="{{ route('cart.decrement', $item->product_id) }}" 
-                                                    style="text-decoration: none;">-</a>
-                                            </h5>
-                                        </div>
-                                        <div>
-                                            <h5>{{ $item->quantity }}</h5>
-                                        </div>
-                                        <div class="mx-3">
-                                            <h5>
-                                                <a href="{{ route('cart.increment', $item->product_id) }}" 
-                                                    style="text-decoration: none;">+</a>
-                                            </h5>
+<div class="container-fluid py-5" style="margin-top: 70px; background-color: #f8f9fa;">
+    <div class="container">
+        @if($cartItems->count() > 0)
+        <h1 class="text-center mb-5">Your Shopping Cart</h1>
+        <div class="row">
+            <div class="col-lg-8">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h4">Cart Items ({{ $cartItems->count() }})</h2>
+                        <a href="{{ route('cart.clear') }}" class="btn btn-outline-danger">
+                            <i class="fa-solid fa-trash-can me-2"></i>Remove All Items
+                        </a>
+                    </div>
+                    @foreach($cartItems as $item)
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 mb-3 mb-md-0">
+                                    <img src="{{ $item->product->image }}" alt="{{ $item->product->name }}" 
+                                        class="img-fluid rounded" style="mix-blend-mode: darken; max-height: 150px; object-fit: contain;">
+                                </div>
+                                <div class="col-md-9">
+                                    <h5 class="card-title">{{ $item->product->name }}</h5>
+                                    <p class="text-muted mb-2">{{ $item->product->category->name }}</p>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <span class="me-3">Quantity:</span>
+                                        <div class="btn-group" role="group" aria-label="Quantity controls">
+                                            <a href="{{ route('cart.decrement', $item->product_id) }}" class="btn btn-outline-secondary btn-sm">-</a>
+                                            <span class="btn btn-outline-secondary btn-sm disabled">{{ $item->quantity }}</span>
+                                            <a href="{{ route('cart.increment', $item->product_id) }}" class="btn btn-outline-secondary btn-sm">+</a>
                                         </div>
                                     </div>
-                                </div>
-                                <p class="card-text">
-                                    <span class="fw-bold fs-4">${{ $item->product->adjusted_price }}
-                                        <span style="font-size: 14px; font-weight: 600;">{{session('currency','CAD')}}</span>
-                                    </span> per unit
-                                </p>
-                                <div class="row g-2 mb-3">
-                                    <a href="{{ route('cart.remove', $item->product_id) }}" class="container">
-                                        <button type="button" class="btn bg-light">Remove Item</button>
+                                    <p class="card-text mb-3">
+                                        <span class="fw-bold fs-5">${{ number_format($item->product->adjusted_price, 2) }}</span>
+                                        <span class="text-muted ms-2">{{ session('currency', 'CAD') }} per unit</span>
+                                    </p>
+                                    <a href="{{ route('cart.remove', $item->product_id) }}" class="btn btn-sm btn-outline-danger">
+                                        <i class="fa-solid fa-trash-can me-2"></i>Remove Item
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                @endforeach
-            @else
-                <div class="text-center fw-bold mt-3" style="width: 97vw;">
-                    <img class="w-25 h-25" src="{{ asset('storage/'.'nocontant.png') }}" style="mix-blend-mode: darken;">
-                    <h4>No items available in cart!</h4>
-                </div>
-            @endif
-        </div>
+                    @endforeach
+                @else
+                   
+                    <div class="text-center py-5 col">
+                        <img src="{{ asset('storage/nocontant.png') }}" alt="Empty Cart" class="img-fluid mb-4" style="max-width: 200px; max-height:200px; mix-blend-mode: darken;">
+                        <h2 class="h4 mb-4">Your cart is empty!</h2>
+                        <p class="text-muted mb-4">Looks like you haven't added any items to your cart yet.</p>
+                        <a href="{{ route('product-list-categorized', 'all') }}" class="btn btn-primary">
+                            <i class="fa-solid fa-shopping-cart me-2"></i>Start Shopping
+                        </a>
+                    </div>
+                @endif
+            </div>
 
-        @if($cartItems->count() > 0)
-        <div class="col-md-4 mt-md-5 pt-md-2">
-            <div class="card">
-                <div class="card-body bg-light">
-                    <h2 class="card-title mb-4">Order Summary</h2>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Subtotal</span>
-                        <span>${{ number_format($subTotal, 2) }}</span>
+            @if($cartItems->count() > 0)
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title h4 mb-4">Order Summary</h2>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span>${{ number_format($subTotal, 2) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Estimated Tax</span>
+                            <span>${{ number_format($tax, 2) }}</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="fw-bold">Total Amount</span>
+                            <span class="fw-bold fs-5">${{ number_format($total, 2) }}</span>
+                        </div>
+                        <form action="{{ route('cart.checkout') }}" method="post" onsubmit="return confirmCheckout()">
+                            @csrf
+                            <button type="submit" class="btn btn-primary w-100 mb-3">
+                                <i class="fa-solid fa-envelope me-1" aria-hidden="true"></i> Proceed to Checkout
+                            </button>
+                        </form>
+                        <a class="btn btn-outline-secondary w-100" href="{{ route('product-list-categorized', 'all') }}">
+                            <i class="fa-solid fa-arrow-left me-2"></i>Continue Shopping
+                        </a>
                     </div>
-                    <div class="d-flex justify-content-between mb-3">
-                        <span>Estimated Tax</span>
-                        <span>${{ number_format($tax, 2) }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between pt-1 mb-2 fw-bold">
-                        <span>Total Amount</span>
-                        <span class="fw-bold" style="font-size: 18px;">${{ number_format($total, 2) }}</span>
-                    </div>
-                    <form action="{{ route('cart.checkout') }}" method="post" onsubmit="return confirmCheckout()">
-                        @csrf
-                        <button type="submit" class="btn w-100 mb-2 text-white" 
-                            style="background-color: #090841;">Submit Order</button>
-                    </form>
-                    <a class="btn text-center d-block text-decoration-none"
-                        href="{{ route('product-list-categorized', 'all') }}" 
-                        style="color: #090841;">Continue Shopping >></a>
                 </div>
+                <div class="mt-4 p-4 bg-light rounded">
+                    <h3 class="h5 mb-3">Why Shop with Us?</h3>
+                    <ul class="list-unstyled">
+                        <li><i class="fa-solid fa-check text-success me-2"></i>Quality Aviation Products</li>
+                        <li><i class="fa-solid fa-check text-success me-2"></i>Expert Customer Support</li>
+                        <li><i class="fa-solid fa-check text-success me-2"></i>Fast & Secure Shipping</li>
+                    </ul>
+                </div>
+                @endif
             </div>
         </div>
-        @endif
     </div>
 </div>
 @endsection 
+
+@push('styles')
+<style>
+    .btn-group .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    .card {
+        transition: box-shadow 0.3s ease-in-out;
+    }
+    .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
+@endpush
 
 @push('scripts')
 <script>
@@ -114,4 +122,4 @@ function confirmCheckout() {
     return confirm('Are you sure you want to submit this order? An email confirmation will be sent to your email address.');
 }
 </script>
-@endpush 
+@endpush
