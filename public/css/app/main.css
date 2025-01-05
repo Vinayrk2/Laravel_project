@@ -163,16 +163,17 @@
 } */
 #loading {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     position: absolute;
     left:0;top:0;
     z-index: 5000;
-    height: 100vh;
-    width:100vw;
+    height: 100%;
+    width:100%;
     display:none;
-    background-color: transparent;
-
+    /* background-color: transparent; */
+    background-color: rgba(0, 0, 0, 0.514);
 }
 
 .pl {

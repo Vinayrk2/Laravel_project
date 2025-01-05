@@ -119,7 +119,12 @@
 @push('scripts')
 <script>
 function confirmCheckout() {
-    return confirm('Are you sure you want to submit this order? An email confirmation will be sent to your email address.');
+    if (confirm('Are you sure you want to submit this order? An email confirmation will be sent to your email address.')) {
+        showLoading(); // Call a function to display the loading indicator
+        return true;
+    }
+    return false;
 }
+
 </script>
 @endpush

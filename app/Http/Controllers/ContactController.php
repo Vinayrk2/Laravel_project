@@ -24,6 +24,12 @@ class ContactController extends Controller
         // Send email
         Mail::to(env('MAIL_FROM_ADDRESS'))->send(new ContactFormMail($validated));
 
-        return redirect()->back()->with('success', 'Thank you for your message. We will contact you soon!');
+            // Redirect to the success page with data
+    return redirect()->route('success')->with([
+        'title' => 'Thank You for Reaching Out!',
+        'message' => 'Your message has been successfully submitted. We will contact you soon!',
+        'buttonText' => 'Return to Home',
+        'redirectRoute' => 'index',
+    ]);
     }
 }

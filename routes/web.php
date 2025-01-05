@@ -90,3 +90,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 
+Route::get('/success', function () {
+    return view('success', [
+        'title' => session('title', 'Success'),
+        'message' => session('message', 'Your request was processed successfully.'),
+        'buttonText' => session('buttonText', 'Go To Homepage'),
+        'redirectRoute' => session('redirectRoute', 'index'),
+    ]);
+})->name('success');

@@ -131,7 +131,7 @@
                         @auth
                             <a href="{{ route('profile') }}"
                                 class="text-dark me-3 text-decoration-none border px-3 py-1 rounded">
-                                <i class="fas fa-user fs-6"></i> {{ Auth::user()->username }}
+                                <i class="fas fa-user fs-6"></i> {{ Auth::user()->name }}
                             </a>
                         @else
                             <a href="{{ route('login') }}" class="text-dark me-3 fs-6">
@@ -249,6 +249,7 @@ ABT4S 2E8 Canada'}}
             <circle class="pl__ring pl__ring--d" cx="155" cy="120" r="70" fill="none" stroke="#000" stroke-width="20"
                     stroke-dasharray="0 440" stroke-linecap="round"></circle>
         </svg>
+        <h4 class="text-center text-white"> Processing </h4>
     </div>
     
 

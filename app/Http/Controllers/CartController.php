@@ -131,7 +131,12 @@ class CartController extends Controller
         Cart::where('user_id', $user->id)->delete();
         $this->updateGlobalCartCount();
 
-        return redirect()->route('cart.index')
-            ->with('success', 'Order submitted successfully! Check your email for confirmation.');
+    // Redirect to the success page with data
+    return redirect()->route('success')->with([
+        'title' => 'Thank You for Your Order!',
+        'message' => 'Your order has been successfully placed. A confirmation email has been sent to you. We appreciate your business!',
+        'buttonText' => 'Continue Shopping',
+        'redirectRoute' => 'index', // Add any other route for redirection
+    ]);
     }
 } 

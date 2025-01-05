@@ -99,6 +99,8 @@
             document.getElementById('contactAlert').innerText = "Description is too short. Please enter at least 10 characters.";
             return false;
         }
+
+        showLoading();
         return true;
     }
 </script>
