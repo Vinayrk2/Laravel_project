@@ -53,8 +53,8 @@
                                     </div>
                                 </div>
                                 <p class="card-text">
-                                    <span class="fw-bold fs-4">${{ $item->product->price }}
-                                        <span style="font-size: 14px; font-weight: 600;">USD</span>
+                                    <span class="fw-bold fs-4">${{ $item->product->adjusted_price }}
+                                        <span style="font-size: 14px; font-weight: 600;">{{session('currency','CAD')}}</span>
                                     </span> per unit
                                 </p>
                                 <div class="row g-2 mb-3">
@@ -69,7 +69,7 @@
                 @endforeach
             @else
                 <div class="text-center fw-bold mt-3" style="width: 97vw;">
-                    <img class="w-25 h-25" src="{{ asset('images/nocontant.png') }}" style="mix-blend-mode: darken;">
+                    <img class="w-25 h-25" src="{{ asset('storage/'.'nocontant.png') }}" style="mix-blend-mode: darken;">
                     <h4>No items available in cart!</h4>
                 </div>
             @endif

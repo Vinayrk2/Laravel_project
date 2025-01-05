@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class SiteSetting extends Model
 {
@@ -21,6 +22,41 @@ class SiteSetting extends Model
         'youtube',
         'linkedin',
     ];
+
+    // Cache key for site settings
+    private static string $cacheKey = 'site_settings';
+
+    /**
+     * Get cached instance of site settings
+     */
+    public static function getCached()
+    {
+        return Cache::rememberForever(self::$cacheKey, function () {
+            return self::getInstance();
+        });
+    }
+
+    /**
+     * Clear the site settings cache
+     */
+    public static function clearCache()
+    {
+        Cache::forget(self::$cacheKey);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Clear cache when settings are updated
+        static::saved(function () {
+            self::clearCache();
+        });
+
+        static::deleted(function () {
+            self::clearCache();
+        });
+    }
 
     /**
      * Get footer data for the site.

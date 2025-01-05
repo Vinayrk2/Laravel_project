@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderConfirmation;
+use App\Helpers\helpers;
 
 class CartController extends Controller
 {
+    private function updateGlobalCartCount()
+    {
+        session()->put('cart_count', Cart::where('user_id', Auth::id())->sum('quantity'));
+    }
+
     public function index()
     {
         $cartItems = Cart::where('user_id', Auth::id())
@@ -45,6 +51,7 @@ class CartController extends Controller
             ]);
         }
 
+        $this->updateGlobalCartCount();
         return redirect()->back()->with('success', 'Product added to cart!');
     }
 
@@ -54,12 +61,14 @@ class CartController extends Controller
             ->where('product_id', $id)
             ->delete();
 
+        $this->updateGlobalCartCount();
         return redirect()->back()->with('success', 'Item removed from cart!');
     }
 
     public function clearCart()
     {
         Cart::where('user_id', Auth::id())->delete();
+        $this->updateGlobalCartCount();
         return redirect()->back()->with('success', 'Cart cleared!');
     }
 
@@ -69,6 +78,7 @@ class CartController extends Controller
             ->where('product_id', $id)
             ->increment('quantity');
 
+        $this->updateGlobalCartCount();
         return redirect()->back();
     }
 
@@ -84,10 +94,11 @@ class CartController extends Controller
             $cartItem->delete();
         }
 
+        $this->updateGlobalCartCount();
         return redirect()->back();
     }
 
-    public function checkout(Request $request)
+    public function checkout()
     {
         $user = Auth::user();
         $cartItems = Cart::where('user_id', $user->id)->with('product')->get();
@@ -96,7 +107,7 @@ class CartController extends Controller
             return $item->product->price * $item->quantity;
         });
         
-        $tax = $subTotal * 0.13;
+        $tax = $subTotal * getSiteSetting('tax');
         $total = $subTotal + $tax;
 
         // Send email to customer
@@ -109,7 +120,7 @@ class CartController extends Controller
         ));
 
         // Send email to admin
-        Mail::to('avionicsqf@gmail.com')->send(new OrderConfirmation(
+        Mail::to(getSiteSetting('bussiness_email'))->send(new OrderConfirmation(
             $user, 
             $cartItems, 
             $subTotal, 
@@ -117,8 +128,8 @@ class CartController extends Controller
             $total
         ));
 
-        // Clear the cart
         Cart::where('user_id', $user->id)->delete();
+        $this->updateGlobalCartCount();
 
         return redirect()->route('cart.index')
             ->with('success', 'Order submitted successfully! Check your email for confirmation.');

@@ -16,14 +16,15 @@ use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\CurrencyController;
 
 Route::get('/', [HomeController::class, 'home'])->name('index');
 Route::get('/user/signup', [HomeController::class, 'home'])->name('cart');
 Route::get('/product/category/{name}', [ProductController::class, 'categorizedProducts'])
     ->name('product-list-categorized');
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product-view');
-Route::get('/news', [NewsController::class, 'viewNews'])->name('view-news');
-// Route::get('/news', [NewsController::class, 'viewNews'])->name('view-news');
+Route::get('/news', [NewsController::class, 'viewNews'])->name('news.index');
 Route::get('/aboutus', [AboutController::class, 'aboutPage'])->name('aboutpage');
 Route::get('/contactus', [ContactController::class, 'contactPage'])->name('contactpage');
 
@@ -74,17 +75,8 @@ Route::middleware(['auth'])->group(function () {
 
 Route::post('/contactus', [ContactController::class, 'submitContact'])->name('contact.submit');
 
-// Admin routes
-// Route::prefix('admin')->group(function () {
-//     Route::get('/login', [AdminController::class, 'login'])->name('filament.admin.auth.login');
-//     Route::post('/login', [AdminController::class, 'authenticate'])->name('admin.login.post');
-    
-//     // Protected admin routes
-//     Route::middleware(['admin'])->group(function () {
-//         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-//         // Add other admin routes here
-//     });
-// });
+Route::post('/set_currency', [CurrencyController::class, 'setCurrency']);
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -95,4 +87,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/cart/decrement/{id}', [CartController::class, 'decrementQuantity'])->name('cart.decrement');
     Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 });
+
+Route::get('/search', [SearchController::class, 'search'])->name('search');
 

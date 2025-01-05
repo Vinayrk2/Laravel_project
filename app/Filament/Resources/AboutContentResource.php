@@ -67,7 +67,6 @@ class AboutContentResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
@@ -79,7 +78,6 @@ class AboutContentResource extends Resource
             'edit' => Pages\EditAboutContent::route('/{record}/edit'),
         ];
     }
-
 
     public static function getNavigationUrl(): string
     {

@@ -12,7 +12,7 @@ class HomeController extends Controller
     public function home(Request $request)
     {
         // Fetch the first 4 categories
-        $categories = Categories::take(4)->get();
+        $categories = Categories::take(10)->get();
 
         // Fetch the latest 5 products
         $products = Product::orderBy('created_at', 'desc')->take(5)->get();
@@ -34,9 +34,9 @@ class HomeController extends Controller
                 'id' => $product->id,
                 'name' => $product->name,
                 'description' => $product->description,
-                'price' => $product->price,
+                'price' => $product->adjusted_price,
                 'image' => $product->image, // Assume getImageUrl() returns the image URL
-                'currency' => $product->currency,
+                'currency' => session('currency', "CAD"),
                 'category'=> $product->category_id,
                 // Add other fields as needed
             ];

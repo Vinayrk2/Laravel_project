@@ -82,4 +82,16 @@ class SiteSettingResource extends Resource
     {
         return static::getUrl('edit', ['record' => 1]);
     }
+
+    public static function afterSave(): void
+    {
+        // Clear the site settings cache after saving
+        SiteSetting::clearCache();
+    }
+
+    public static function afterDelete(): void
+    {
+        // Clear the site settings cache after deleting
+        SiteSetting::clearCache();
+    }
 }

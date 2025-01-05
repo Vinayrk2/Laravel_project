@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Cart;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,31 +19,23 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'email' => 'required|email',
+            'password' => 'required'
         ]);
 
-        // First check if the user exists and credentials are correct
-        $user = User::where('email', $credentials['email'])->first();
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            // Update cart count in session after login
+            $cartCount = Cart::where('user_id', Auth::id())->sum('quantity');
+            session()->put('cart_count', $cartCount);
 
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
-            return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ])->onlyInput('email');
+            return redirect()->intended('/')->with('success', 'Logged in successfully!');
         }
 
-        // Check if email is verified before creating session
-        if (!$user->hasVerifiedEmail()) {
-            Auth::login($user); // Temporarily login to allow access to verification notice
-            return redirect()->route('verification.notice')
-                ->withErrors(['email' => 'Please verify your email address before logging in.']);
-        }
-
-        // Only create permanent session if email is verified
-        Auth::login($user, $request->boolean('remember'));
-        $request->session()->regenerate();
-
-        return redirect()->intended('/');
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     public function showRegister()

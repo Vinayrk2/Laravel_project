@@ -2,27 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AboutContent;
+use App\Models\AboutSection;
 use Illuminate\Http\Request;
-use App\Models\AboutContent; // Import the AboutContent model
 
 class AboutController extends Controller
 {
     public function aboutPage()
     {
-        // Fetch the AboutContent record with id = 1
-        $about = AboutContent::find(1);
+        $aboutContent = AboutContent::getContent();
+        $sections = AboutSection::all()->toArray();
 
-        // Fetch related sections if the AboutContent record exists
-        if ($about) {
-            $sections = $about->sections; // Assuming a relationship is defined in the AboutContent model
-        } else {
-            $sections = [];
-        }
-
-        // Pass data to the view
-        return view('about.index', [
-            'content' => $about,
-            'sections' => $sections,
-        ]);
+        // dd($sections);
+    
+        return view('about.index', compact('aboutContent', 'sections'));
     }
+    
+    
 }

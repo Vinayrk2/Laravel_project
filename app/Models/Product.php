@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Session;
 
 class Product extends Model
 {
@@ -16,8 +17,8 @@ class Product extends Model
         'availability',
         'manufacturer',
         'condition',
-        'price',
         'currency',
+        'price',
         'more_details',
         'features',
         'image'
@@ -46,5 +47,14 @@ class Product extends Model
         // Return the image URL or a default image path
         return $firstImage ? asset('storage/' . $firstImage->image) : asset('storage/default.png');
     }
+    
+    // Accessor to adjust the price based on currency
+    public function getAdjustedPriceAttribute()
+    {
+        $currency = Session::get('currency', 'CAD'); // Default to CAD
+        $conversionRate = $currency === 'USD' ? getSiteSetting('currency_rate') : 1; // Conversion rate for USD
+        return round($this->price * $conversionRate, 2); // Adjusted price
+    }
+
 }
 

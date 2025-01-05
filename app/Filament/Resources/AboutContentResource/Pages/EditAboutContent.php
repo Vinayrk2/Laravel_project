@@ -4,7 +4,6 @@ namespace App\Filament\Resources\AboutContentResource\Pages;
 
 use App\Filament\Resources\AboutContentResource;
 use App\Models\AboutContent;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditAboutContent extends EditRecord
@@ -13,14 +12,11 @@ class EditAboutContent extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\DeleteAction::make(),
-        ];
+        return [];
     }
 
     public function mount($record = null): void
     {
-        // Always work with the record with ID 1
-        $this->record = AboutContent::firstOrCreate(['id' => 1]);
+        $this->record = AboutContent::getContent();
     }
 }

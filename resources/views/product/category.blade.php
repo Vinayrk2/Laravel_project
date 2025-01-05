@@ -235,10 +235,10 @@
                                             </p>
                                         @endif
                                         
-                                        @if($product->price)
+                                        @if($product->adjusted_price)
                                             <p class="price mb-0">
-                                                ${{ number_format($product->price, 2) }}
-                                                <small class="text-muted">{{ $product->currency }}</small>
+                                                ${{ number_format($product->adjusted_price, 2) }}
+                                                <small class="text-muted">{{ session('currency','CAD') }}</small>
                                             </p>
                                         @else
                                             <p class="text-danger">Login to view price</p>

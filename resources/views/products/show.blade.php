@@ -80,9 +80,9 @@
                     </tbody>
                 </table>
 
-                @if($product->price)
-                    <span class="text-secondary fw-bolder fs-4">${{ $product->price }} 
-                        <span style="font-size: 14px;">{{ $product->currency }}</span>
+                @if($product->adjusted_price)
+                    <span class="text-secondary fw-bolder fs-4">${{ $product->adjusted_price }} 
+                        <span style="font-size: 14px;">{{ session('currency','CAD') }}</span>
                     </span>
                 @else
                     <span class="text-danger fw-bolder fs-5">Login to view price</span>
@@ -150,9 +150,9 @@
                             <p class="text-decoration-none text-dark">Manufacturer: {{ $product->manufacturer }}</p>
                         @endif
                         <div class="d-flex justify-content-between">
-                            @if($product->price)
-                                <span class="text-secondary fw-bolder fs-4">${{ $product->price }}
-                                    <span style="font-size: 14px;">{{ $product->currency }}</span>
+                            @if($product->adjusted_price)
+                                <span class="text-secondary fw-bolder fs-4">${{ $product->adjusted_price }}
+                                    <span style="font-size: 14px;">{{ session('currency','CAD') }}</span>
                                 </span>
                             @else
                                 <span class="text-danger fw-bolder fs-5">Login to view price</span>

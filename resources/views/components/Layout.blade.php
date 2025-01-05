@@ -10,9 +10,9 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app/main.css') }}">
     <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" type="image/x-icon">
-    @vite('resources/css/main.css')
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Play:wght@400;700&display=swap');
     </style>
@@ -20,26 +20,42 @@
 
 <body>
     <main id="mainbox">
+
+                <!-- search box -->
+        <div id="searchbox" class="d-flex justify-content-center position-absolute">
+            <form id="searchform" class="d-flex" action="{{ route('search') }}" method="get"
+                onsubmit="return searchfunc();">
+                <p id="searchmsg" class="text-danger position-absolute" style="margin-top: -20px; font-size: 15px; z-index: 1000;"></p>
+                <input id="searchinput" type="text" name="q"
+                    placeholder="Search by product name, manufacturer, category, news title">&nbsp;
+                <button id="searchbtn" type="submit" class="px-3">Search</button>
+                <input type="hidden" name="page" value="1">
+                    <i id="searchcancel" style="top: 0px; right: 2px; cursor: pointer; border-radius: 100px;" fill="currentColor" class="fa-solid fa-xmark fs-5 position-absolute bg-white p-1"></i>
+            </form>
+        </div>
         <!-- Top Bar -->
         <div class="top-bar">
             <div class="container-fluid d-flex justify-content-between align-items-center">
                 <div class="d-sm-flex" style="cursor: pointer; color: rgb(160, 160, 160);">
                     <div class="me-3" id="dialButton">
-                        <i class="fas fa-phone"></i> {{ $globalOptions['header']['phone_number'] ?? '+1 (403) 886-4306' }}
+                        <i class="fas fa-phone"></i> {{ getSiteSetting('phone_number_1') }}
                     </div>
                     <div class="me-3" id="emailButton">
-                        <i class="fas fa-envelope"></i> {{ $globalOptions['header']['email'] ?? 'info@qfavionics.com' }}
+                        <i class="fas fa-envelope"></i> {{ getSiteSetting('email') }}
                     </div>
                 </div>
                 <h3 id="companyname" style="letter-spacing: 1px;">QF Avionics</h3>
                 <div class="d-sm-flex">
                     <div class="d-flex justify-content-center align-items-center" style="margin-top: -6px;">
-                        <a href="{{ $globalOptions['footer']['instagram'] ?? '#' }}" class="text-white mt-2 me-2"><i
-                                class="fa-brands fa-instagram fs-6"></i></a>
-                        <a href="{{ $globalOptions['footer']['youtube'] ?? '#' }}" class="text-white mt-2 me-2"><i
-                                class="fa-brands fa-youtube fs-6"></i></a>
-                        <a href="{{ $globalOptions['footer']['linkedin'] ?? '#' }}" class="text-white mt-2 me-2"><i
-                                class="fa-brands fa-linkedin fs-6"></i></a>
+                        <a href="{{ getSiteSetting('instagram') }}" class="text-white mt-2 me-2">
+                            <i class="fa-brands fa-instagram fs-6"></i>
+                        </a>
+                        <a href="{{ getSiteSetting('youtube') }}" class="text-white mt-2 me-2">
+                            <i class="fa-brands fa-youtube fs-6"></i>
+                        </a>
+                        <a href="{{ getSiteSetting('linkedin') }}" class="text-white mt-2 me-2">
+                            <i class="fa-brands fa-linkedin fs-6"></i>
+                        </a>
                     </div>
                     <select class="form-select" id="currency-value" aria-label="Default select example"
                         style="height: 35px; width: 105px;">
@@ -50,6 +66,8 @@
                             <option value="USD">💲USD</option>
                             <option value="CAD" selected>💲CAD</option>
                         @endif
+                        <input type="hidden" name="csrf-token" value="{{ csrf_token() }}" id="currency_csrf" />
+
                     </select>
                 </div>
             </div>
@@ -64,7 +82,7 @@
                 </a>
                 <a class="navbar-toggler" style="border: none; margin-right: -10px;" type="button"
                     data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <img src="{{ asset('images/toggle.png') }}">
+                    <img src="{{ asset('storage/toggle.png') }}">
                 </a>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav mx-auto">
@@ -97,7 +115,7 @@
                             </ul>
                         </li>
                         <li class="nav-item" id="menu">
-                            <a class="nav-link" href="{{ route('view-news') }}"><i class="fa-solid fa-newspaper"></i> NEWS</a>
+                            <a class="nav-link" href="{{ route('news.index') }}"><i class="fa-solid fa-newspaper"></i> NEWS</a>
                         </li>
                         <li class="nav-item" id="menu">
                             <a class="nav-link" href="{{ route('gallery_list') }}"><i class="fa-solid fa-image"></i> GALLERY </a>
@@ -124,7 +142,7 @@
                             <a href="{{ route('cart.index') }}" class="text-dark me-3">
                                 <span class="position-absolute bg-dark text-white fw-bold px-1"
                                     style="font-size: 10px; border-radius: 100%; margin-top: -5px; margin-left: 8px; z-index: 2;">
-                                    {{ $no_of_items ?? 0 }}
+                                    {{ session('cart_count', 0) }}
                                 </span>
                                 <i class="fas fa-shopping-cart fs-6"></i>
                             </a>
@@ -135,6 +153,7 @@
                 </div>
             </div>
         </nav>
+        
 
         <!-- Messages -->
         @if (session('messages'))
@@ -204,13 +223,13 @@ ABT4S 2E8 Canada'}}
                 <div class="col-md-3">
                     <h5><i class="fa-solid fa-hashtag"></i> Social Media Channel</h5>
                     <p class="text-secondary">Follow to get special offers, free giveaways, and once-in-a-lifetime deals.</p>
-                    <a href="{{ $footer['instagram'] ?? '#' }}" class="text-secondary mt-2 me-2">
+                    <a href="{{ getSiteSetting('instagram') }}" class="text-secondary mt-2 me-2">
                         <i id="hover_white" class="fa-brands fa-instagram mx-1 fs-4"></i>
                     </a>
-                    <a href="{{ $footer['youtube'] ?? '#' }}" class="text-secondary mt-2 me-2">
+                    <a href="{{ getSiteSetting('youtube') }}" class="text-secondary mt-2 me-2">
                         <i id="hover_white" class="fa-brands fa-youtube mx-1 fs-4"></i>
                     </a>
-                    <a href="{{ $footer['linkedin'] ?? '#' }}" class="text-secondary mt-2 me-2">
+                    <a href="{{ getSiteSetting('linkedin') }}" class="text-secondary mt-2 me-2">
                         <i id="hover_white" class="fa-brands fa-linkedin mx-1 fs-4"></i>
                     </a>
                 </div>
@@ -234,40 +253,48 @@ ABT4S 2E8 Canada'}}
     
 
     <script>
-                let searchcancel = document.querySelector('#searchcancel');
+        // Search functionality
+        let searchbox = document.querySelector('#searchbox');
+        let searchcancel = document.querySelector('#searchcancel');
         let searchopen = document.querySelector('#searchopen');
         let searchmsg = document.querySelector('#searchmsg');
 
-        // search input validation
-        let searchfunc = () => {
+        // Search input validation
+        function searchfunc() {
             let searchinput = document.querySelector('#searchinput').value;
-
-            setTimeout(() => {
-                searchmsg.innerText = "";
-            }, 5000);
-
+            
             if (searchinput.length < 3) {
-                searchmsg.innerText = "search text length must be greater then 3 characters!";
+                searchmsg.innerText = "Search text must be at least 3 characters!";
+                setTimeout(() => {
+                    searchmsg.innerText = "";
+                }, 3000);
                 return false;
-            } else {
-                searchmsg.innerText = "";
             }
             return true;
         }
 
-        // search functionallity
+        // Search box toggle
         searchopen.addEventListener("click", () => {
-            searchbox.style.left = "0vh";
-            searchbox.style.width = "100%";
+            searchbox.style.left = "0";
             searchbox.style.display = "block";
             searchbox.style.transition = "0.3s";
-        })
+            document.querySelector('#searchinput').focus();
+        });
 
         searchcancel.addEventListener("click", () => {
             searchbox.style.left = "-150%";
-            searchbox.style.display = "none";
+            setTimeout(() => {
+                searchbox.style.display = "none";
+            }, 300);
             searchbox.style.transition = "0.3s";
-        })
+        });
+
+        // Close search box on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && searchbox.style.display === 'block') {
+                searchcancel.click();
+            }
+        });
 
         document.querySelector("#currency-value").addEventListener('change', (e) => {
             let selected = e.target.value;
@@ -276,27 +303,28 @@ ABT4S 2E8 Canada'}}
         })
 
         function setCurrency(currency) {
-            console.log(currency)
-            fetch("/set_currency/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ "currency": currency })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload()
-                    } else {
-                        alert("Failed to set currency: " + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error("Error setting currency:", error);
-                    alert("An error occurred while setting the currency.");
-                });
+    console.log(currency);
+    fetch("/set_currency", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('#currency_csrf').value
+        },
+        body: JSON.stringify({ "currency": currency })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert("Failed to set currency: " + data.error);
         }
+    })
+    .catch(error => {
+        console.error("Error setting currency:", error);
+        alert("An error occurred while setting the currency.");
+    });
+}
 
         window.addEventListener('load', () => {
             document.querySelectorAll(".alert").forEach((value, key) => {

@@ -1,0 +1,42 @@
+
+@section('content')
+<div class="container mt-5 pt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center mb-4">About Us</h2>
+            <div class="text-center mb-5">
+                {{ $aboutContent->main_description }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4 class="card-title">{{ $aboutContent->field1 }}</h4>
+                    <p class="card-text">{{ $aboutContent->field1_description }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4 class="card-title">{{ $aboutContent->field2 }}</h4>
+                    <p class="card-text">{{ $aboutContent->field2_description }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4 class="card-title">{{ $aboutContent->field3 }}</h4>
+                    <p class="card-text">{{ $aboutContent->field3_description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

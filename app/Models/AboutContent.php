@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class AboutContent extends Model
 {
-    protected $table = 'about_contents';
-
     protected $fillable = [
         'main_description',
         'field1',
@@ -15,23 +13,21 @@ class AboutContent extends Model
         'field2',
         'field2_description',
         'field3',
-        'field3_description',
+        'field3_description'
     ];
 
-    public static function getInstance()
+    public static function getContent()
     {
-        return self::firstOrCreate(['id' => 1]);
+        return self::firstOrCreate(['id' => 1], [
+            'main_description' => 'Default main description',
+            'field1' => 'Field 1',
+            'field1_description' => 'Field 1 description',
+            'field2' => 'Field 2',
+            'field2_description' => 'Field 2 description',
+            'field3' => 'Field 3',
+            'field3_description' => 'Field 3 description',
+        ]);
     }
 
-    public static function boot()
-    {
-        parent::boot();
 
-        static::created(function ($model) {
-            if ($model->id === 1) {
-                // Ensure only one instance is created
-                $model->update(['id' => 1]);
-            }
-        });
-    }
 }
