@@ -195,77 +195,86 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container-fluid mt-3">
         <!-- Header -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <h4>Showing products of {{ $name }} category</h4>
-            </div>
-            <div class="col-md-6 text-md-end">
-                <button class="btn btn-outline-primary" id="filter_btn">
-                    <i class="fa-solid fa-filter"></i> Filter Products
+        <div class="row d-flex justify-content-center">
+            <div class="d-flex justify-content-between">
+                <p class="mt-sm-5 pt-sm-3">Showing products of {{ $name }} category.</p>
+                <button class="btn border mt-sm-5 me-3 px-3" id="filter_btn">
+                    <i class="fa-solid fa-filter"></i> Filter Content
                 </button>
             </div>
         </div>
-
-        <!-- Products Grid -->
-        <div class="row g-4">
+    
+        <!-- Main Content -->
+        <div class="row">
             @if($products->count() > 0)
-                @foreach($products as $product)
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="product-grid">
+                    @foreach($products as $product)
                         <div class="product-card">
-                            <a href="{{ route('product-view', $product->id) }}" class="text-decoration-none">
-                                <div class="card border-0">
-                                    <div class="card-body">
+                            <a href="{{ route('product-view', $product->id) }}" class="text-decoration-none border-none">
+                                <div class="card h-100" style="background-color: rgb(245, 245, 245);">
+                                    <div class="card-img-top-wrapper p-3">
                                         <img src="{{ asset($product->image) }}" 
-                                            class="product-image w-100 mb-3" 
-                                            alt="{{ $product->name }}">
-                                        <h5 class="card-title text-dark">{{ $product->name }}</h5>
-                                        <p class="card-text text-muted">{{ $product->category->name }}</p>
-                                        
-                                        @if($product->part_number)
-                                            <p class="card-text small mb-1">
-                                                Part Number: {{ $product->part_number }}
-                                            </p>
-                                        @endif
-                                        
-                                        @if($product->availability)
-                                            <p class="card-text small mb-2">
-                                                Availability: {{ $product->availability }}
-                                            </p>
-                                        @endif
-                                        
-                                        @if($product->adjusted_price)
-                                            <p class="price mb-0">
-                                                ${{ number_format($product->adjusted_price, 2) }}
-                                                <small class="text-muted">{{ session('currency','CAD') }}</small>
-                                            </p>
-                                        @else
-                                            <p class="text-danger">Login to view price</p>
-                                        @endif
+                                             alt="{{ $product->name }}" 
+                                             class="card-img-top rounded" 
+                                             style="mix-blend-mode: darken; aspect-ratio:calc(4/4)">
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <span class="text-secondary" style="font-size: 14px; margin: -25px 0px 10px 0px;">
+                                            {{ $product->category->name }}
+                                        </span>
+                                        <h5 class="card-title fw-bolder text-dark">{{ $product->name }}</h5>
+                                        <p class="card-text flex-grow-1 text-secondary">{{ $product->description }}</p>
+                                        <table class="table" style="font-size: 12px; margin-top: -20px;">
+                                            <tbody>
+                                                @if($product->part_number)
+                                                    <tr>
+                                                        <td class="fw-bold">Part Number</td>
+                                                        <td>{{ $product->part_number }}</td>
+                                                    </tr>
+                                                @endif
+                                                @if($product->availability)
+                                                    <tr>
+                                                        <td class="fw-bold">Availability</td>
+                                                        <td>{{ $product->availability }}</td>
+                                                    </tr>
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                        <div class="d-flex justify-content-between">
+                                            @if($product->adjusted_price)
+                                                <span class="text-secondary fw-bolder fs-4">
+                                                    ${{ number_format($product->adjusted_price, 2) }} 
+                                                    <span style="font-size: 14px;">{{ session('currency', 'CAD') }}</span>
+                                                </span>
+                                            @else
+                                                <span class="text-danger fw-bolder fs-5">Login to view price</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </a>
                         </div>
-                    </div>
-                @endforeach
-
-                <!-- Pagination -->
-                <div class="col-12">
-                    <div class="d-flex justify-content-center mt-4">
+                    @endforeach
+                </div>
+    
+                @if($products->count() > 15)
+                    <!-- Pagination -->
+                    <div class="pagination d-flex justify-content-center mt-4">
                         {{ $products->links() }}
                     </div>
-                </div>
+                @endif
             @else
-                <div class="col-12">
-                    <div class="alert alert-info text-center">
-                        <h4 class="alert-heading">No Products Found</h4>
-                        <p>Sorry, no products are available in this category at the moment.</p>
+                <div class="col-md-4">
+                    <div class="fw-bolder" style="height: 50vh;">
+                        Sorry! No Products Available.
                     </div>
                 </div>
             @endif
         </div>
     </div>
+    
 
     <!-- Filter Sidebar -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="filterSidebar">

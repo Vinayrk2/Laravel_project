@@ -57,6 +57,36 @@
             grid-template-columns: 1fr;
         }
     }
+
+    .scroll-container {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: hidden; /* Hide vertical scrolling */
+    white-space: nowrap; /* Prevent wrapping of content */
+    display: flex;
+    padding-bottom: 1rem;
+    /* gap: 1rem; Add space between items */
+    scrollbar-width: thin; /* Thin scrollbar for Firefox */
+    scrollbar-color: #888 #f1f1f1; /* Scrollbar thumb and track colors for Firefox */
+}
+    .scroll-container::-webkit-scrollbar {
+    height: 6px; /* Adjust the scrollbar height */
+    
+}
+
+.scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Track background color */
+    border-radius: 10px; /* Optional: rounded corners */
+}
+
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background: #888; /* Scrollbar thumb color */
+    border-radius: 10px; /* Optional: rounded corners */
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Thumb color on hover */
+}
 </style>
 
 <div class="container-fluid mt-5 pt-3">
@@ -93,10 +123,10 @@
     </div>
 
     <div class="container my-5">
-        <div class="row px-1 gx-4 gy-4 d-flex justify-content-center">
+        <div class="row gx-5 gy-4 d-flex justify-content-center" >
             @if ($whatWeDo)
                 @foreach ($whatWeDo as $section)
-                    <div class="col-md-4">
+                    <div class="col-md-4" >
                         <div class="card rounded-0"
                             style="box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em; overflow: hidden;">
                             <div class="row no-gutters" style="height:100%;">
@@ -120,25 +150,34 @@
         </div>
     </div>
 
-    <div class="container-fluid p-2">
-        <h1 class="text-center fw-bolder">Our Product Categories</h1>
+    <div class="container-fluid p-2 text-center">
+        <h1 class="display-5 fw-bold text-body-emphasis" style="letter-spacing: 1px;">Our Product Categories</h1>
+        <p class="lead px-3 mb-5 text-secondary">
+            Explore an exceptional range of aviation products meticulously crafted for precision, reliability, and innovation. From cutting-edge avionics systems and advanced maintenance tools to everyday essentials, our categories are designed to meet the diverse needs of aviation professionals and enthusiasts alike. Whether you're enhancing performance or seeking seamless solutions, you'll find products tailored to elevate your experience in the skies and beyond.
+        </p>
         <div class="scroll-container">
             @if ($categories)
-                @foreach ($categories as $category)
+                @foreach ($categories->slice(0,12) as $category)
                     <a href="{{ route('product-list-categorized', ['name' => $category->name]) }}" class="text-decoration-none">
                         <div class="scroll-item item1"
-                            style="overflow: hidden; background-image: url('{{ asset('storage/' .$category->image) }}')">
-                            <p class="fs-2 fw-bold rounded w-100 d-flex justify-content-center align-items-center"
-                                style="background-color: rgba(0, 0, 0, 0.651); height: 110%;">{{ $category->name }}</p>
+                            style="overflow: hidden; background-image: url('{{ asset('storage/' . $category->image) }}')">
+                            <p class="fs-2 fw-bold rounded w-100 d-flex justify-content-center align-items-center text-white"
+                                style="background-color: rgba(0, 0, 0, 0.6); height: 110%;">{{ $category->name }}</p>
                         </div>
                     </a>
                 @endforeach
+            @else
+                <p class="text-center text-muted">No categories available at the moment. Check back soon!</p>
             @endif
         </div>
     </div>
+    
 
-    <div class="container-fluid mt-5">
-        <h1 class="text-center fw-bolder">Featured Collection</h1>
+    <div class="container-fluid mt-5 ">
+        <h1 class="display-5 fw-bold text-body-emphasis text-center" style="letter-spacing: 1px;">Featured Collection</h1>
+        <p class="lead px-3 mb-5 text-secondary text-center">
+            Dive into our exclusive selection of featured products, handpicked to represent the pinnacle of quality and innovation in aviation solutions. Each product in this collection is thoughtfully curated to ensure optimal performance, durability, and functionality. Whether you're upgrading equipment, exploring new technologies, or discovering unique tools, our featured collection embodies excellence that keeps you soaring.
+        </p>
         <div class="product-grid">
             @if ($products)
                 @foreach ($products as $product)

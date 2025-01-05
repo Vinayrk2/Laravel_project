@@ -24,7 +24,7 @@ class CartController extends Controller
             ->get();
 
         $subTotal = $cartItems->sum(function($item) {
-            return $item->product->price * $item->quantity;
+            return $item->product->adjusted_price * $item->quantity;
         });
 
         $tax = $subTotal * 0.13; // 13% tax
@@ -104,7 +104,7 @@ class CartController extends Controller
         $cartItems = Cart::where('user_id', $user->id)->with('product')->get();
         
         $subTotal = $cartItems->sum(function($item) {
-            return $item->product->price * $item->quantity;
+            return $item->product->adjusted_price * $item->quantity;
         });
         
         $tax = $subTotal * getSiteSetting('tax');

@@ -37,7 +37,7 @@ class HomeController extends Controller
                 'price' => $product->adjusted_price,
                 'image' => $product->image, // Assume getImageUrl() returns the image URL
                 'currency' => session('currency', "CAD"),
-                'category'=> $product->category_id,
+                'category'=> $product->category,
                 // Add other fields as needed
             ];
         });

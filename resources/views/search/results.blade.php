@@ -206,44 +206,57 @@
             @endif
 
             @if($products->count() > 0)
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="mb-0">Products</h4>
-                        <div>({{ $productsCount }} products found)</div>
-                    </div>
-
-                    <div class="product-grid">
-                        @foreach($products as $product)
-                            <div class="product-card">
-                                <a href="{{ route('product-view', $product->id) }}" class="text-decoration-none">
-                                    <div class="card h-100">
-                                        <img src="{{ $product->image }}" class="card-img-top p-3" 
-                                            alt="{{ $product->name }}" style="mix-blend-mode: darken;">
-                                        <div class="card-body">
-                                            <span class="text-secondary small">{{ $product->category->name }}</span>
-                                            <h5 class="card-title fw-bold">{{ $product->name }}</h5>
-                                            @if($product->manufacturer)
-                                                <p class="card-text">Manufacturer: {{ $product->manufacturer }}</p>
-                                            @endif
+            <div class="mb-4">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0">Products</h4>
+                    <div>({{ $productsCount }} products found)</div>
+                </div>
+        
+                <!-- Product Grid -->
+                <div class="product-grid">
+                    @foreach($products as $product)
+                        <div class="product-card">
+                            <a href="{{ route('product-view', $product->id) }}" class="text-decoration-none">
+                                <div class="card h-100" style="background-color: rgb(245, 245, 245);">
+                                    <div class="card-img-top-wrapper p-3">
+                                        <img src="{{ asset($product->image) }}" 
+                                             alt="{{ $product->name }}" 
+                                             class="card-img-top rounded" 
+                                             style="mix-blend-mode: darken; aspect-ratio:calc(4/4);">
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <span class="text-secondary small" style="margin-bottom: 10px;">
+                                            {{ $product->category->name }}
+                                        </span>
+                                        <h5 class="card-title fw-bolder text-dark">{{ $product->name }}</h5>
+                                        @if($product->manufacturer)
+                                            <p class="card-text text-secondary">Manufacturer: {{ $product->manufacturer }}</p>
+                                        @endif
+                                        <div class="d-flex justify-content-between align-items-center mt-auto">
                                             @if($product->price)
-                                                <span class="text-secondary fw-bold fs-4">${{ $product->adjusted_price }}
-                                                    <span class="small">{{ session('currency','CAD') }}</span>
+                                                <span class="text-secondary fw-bolder fs-4">
+                                                    ${{ number_format($product->adjusted_price, 2) }}
+                                                    <span class="small">{{ session('currency', 'CAD') }}</span>
                                                 </span>
                                             @else
-                                                <span class="text-danger fw-bold">Login to view price</span>
+                                                <span class="text-danger fw-bolder">Login to view price</span>
                                             @endif
                                         </div>
                                     </div>
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <div class="d-flex justify-content-center mt-4">
-                        {{ $products->appends(request()->query())->links() }}
-                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
                 </div>
-            @endif
+        
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $products->appends(request()->query())->links() }}
+                </div>
+            </div>
+        @endif
+        
 
             @if($news->count() === 0 && $products->count() === 0)
                 <div class="text-center py-5">
