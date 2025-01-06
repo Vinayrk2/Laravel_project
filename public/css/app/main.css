@@ -61,12 +61,14 @@
 /* search box style */
 #searchbox {
     z-index: 500;
-    left: -150%;
     background-color: rgb(255, 255, 255);
     overflow: hidden;
     padding-top: 5px;
     padding-bottom: 0px;
-    bottom: 0px;
+    right:0.6em;
+    top:93%;
+    height: 0%;
+    display: none;
 }
 
 #searchform {
@@ -76,8 +78,9 @@
 }
 
 @media (max-width: 500px) {
-    #searchform {
+    #searchbox{
         width: 100%;
+        padding: 10px;
     }
 }
 
@@ -95,6 +98,7 @@
     padding: 0px 10px;
     color: white;
     border: none;
+    height: 40px;
 }
 
 @media (max-width: 991.98px) {

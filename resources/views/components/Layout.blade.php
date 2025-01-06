@@ -21,18 +21,7 @@
 <body>
     <main id="mainbox">
 
-                <!-- search box -->
-        <div id="searchbox" class="d-flex justify-content-center position-absolute">
-            <form id="searchform" class="d-flex" action="{{ route('search') }}" method="get"
-                onsubmit="return searchfunc();">
-                <p id="searchmsg" class="text-danger position-absolute" style="margin-top: -20px; font-size: 15px; z-index: 1000;"></p>
-                <input id="searchinput" type="text" name="q"
-                    placeholder="Search by product name, manufacturer, category, news title">&nbsp;
-                <button id="searchbtn" type="submit" class="px-3">Search</button>
-                <input type="hidden" name="page" value="1">
-                    <i id="searchcancel" style="top: 0px; right: 2px; cursor: pointer; border-radius: 100px;" fill="currentColor" class="fa-solid fa-xmark fs-5 position-absolute bg-white p-1"></i>
-            </form>
-        </div>
+           
         <!-- Top Bar -->
         <div class="top-bar">
             <div class="container-fluid d-flex justify-content-between align-items-center">
@@ -152,6 +141,18 @@
                     
                 </div>
             </div>
+                 <!-- search box -->
+        <div id="searchbox" class="d-flex justify-content-center position-absolute">
+            <form id="searchform" class="d-flex" action="{{ route('search') }}" method="get"
+                onsubmit="return searchfunc();">
+                <p id="searchmsg" class="text-danger position-absolute" style="margin-top: -20px; font-size: 15px; z-index: 1000;"></p>
+                <input id="searchinput" type="text" name="q"
+                    placeholder="Search by product name, manufacturer, category, news title">&nbsp;
+                <button id="searchbtn" type="submit" class="px-3">Search</button>
+                <input type="hidden" name="page" value="1">
+                    <i id="searchcancel" style="top: 0px; right: 2px; cursor: pointer; border-radius: 100px;" fill="currentColor" class="fa-solid fa-xmark fs-5 position-absolute bg-white p-1"></i>
+            </form>
+        </div>
         </nav>
         
 
@@ -276,14 +277,15 @@ ABT4S 2E8 Canada'}}
 
         // Search box toggle
         searchopen.addEventListener("click", () => {
-            searchbox.style.left = "0";
-            searchbox.style.display = "block";
+            searchbox.style.height = "max-content";
             searchbox.style.transition = "0.3s";
+            searchbox.style.display = "initial";
             document.querySelector('#searchinput').focus();
+
         });
 
         searchcancel.addEventListener("click", () => {
-            searchbox.style.left = "-150%";
+            searchbox.style.height = "0%";
             setTimeout(() => {
                 searchbox.style.display = "none";
             }, 300);
